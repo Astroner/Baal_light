@@ -12,7 +12,7 @@ typedef struct Baal {
     size_t blockSize;
     size_t blocksNumber;
     char* buffer;
-    void* cursor;
+    char* cursor;
     Baal_FreeStack freeStack;
 } Baal;
 

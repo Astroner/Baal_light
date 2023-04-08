@@ -79,7 +79,7 @@ void Baal_clear(Baal* allocator) {
 void Baal_print(Baal* allocator){
     printf("Blocks:\n");
     for(size_t i = 0; i < allocator->blocksNumber; i++) {
-        void* currentPointer = allocator->buffer + i * allocator->blockSize;
+        char* currentPointer = allocator->buffer + i * allocator->blockSize;
         int status = allocator->buffer == allocator->cursor ? 0 : currentPointer < allocator->cursor;
         if(status) {
             for(size_t j = 0; j < allocator->freeStack.size; j++) {
