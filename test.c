@@ -65,6 +65,17 @@ void freeStackWorksCorrectly() {
     assert(baal->freeStack.size == 0);
 }
 
+void correctlyHandlesEndOfTheBlocks() {
+    Baal_createStatic(baal, sizeof(int), 4);
+    Baal_alloc(baal);
+    Baal_alloc(baal);
+    Baal_alloc(baal);
+    Baal_alloc(baal);
+    int* last = Baal_alloc(baal);
+
+    assert(last == NULL);
+}
+
 #define TEST(funcName)\
     printf("%s - ", #funcName);\
     funcName();\
@@ -77,6 +88,7 @@ int main(void) {
     TEST(createsAndDestroysDynamicAllocator);
     TEST(movesCursorCorrectly);
     TEST(freeStackWorksCorrectly);
+    TEST(correctlyHandlesEndOfTheBlocks);
 
     printf("\n");
     return 0;
