@@ -76,6 +76,21 @@ void correctlyHandlesEndOfTheBlocks() {
     assert(last == NULL);
 }
 
+void clearsMemory() {
+    Baal_createStatic(baal, sizeof(int), 4);
+
+    int* first = Baal_alloc(baal);
+    Baal_alloc(baal);
+    Baal_alloc(baal);
+    Baal_alloc(baal);
+
+    Baal_free(baal, first);
+    Baal_clear(baal);
+
+    assert(baal->cursor == baal->buffer);
+    assert(baal->freeStack.size == 0);
+}
+
 #define TEST(funcName)\
     printf("%s - ", #funcName);\
     funcName();\
@@ -89,6 +104,7 @@ int main(void) {
     TEST(movesCursorCorrectly);
     TEST(freeStackWorksCorrectly);
     TEST(correctlyHandlesEndOfTheBlocks);
+    TEST(clearsMemory);
 
     printf("\n");
     return 0;
