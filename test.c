@@ -1,5 +1,5 @@
 #define BAAL_IMPLEMENTATION
-#include "./Baal.h"
+#include "./Baal_light.h"
 
 #include <assert.h>
 #include <stdio.h>

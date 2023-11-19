@@ -2,7 +2,7 @@
 This is STB-like library for block memory allocation.
 
 # Include
-As with any header only library, you need to include *Baal.h* library to your project and define **BAAL_IMPLEMENTATION** before **include** statement to include the implementation.
+As with any header only library, you need to include *Baal_light.h* library to your project and define **BAAL_IMPLEMENTATION** before **include** statement to include the implementation.
 
 # Usage
 ## Create instance
@@ -12,7 +12,7 @@ First, create **Baal** instance:
 
 ```c
 #define BAAL_IMPLEMENTATION
-#include "Baal.h"
+#include "Baal_light.h"
 
 // static way
 Baal_createStatic(baalStatic, sizeof(int), 10);
@@ -27,7 +27,7 @@ Use **Baal_alloc()** to allocate next available block and **Baal_free()** to fre
 #include <stdio.h>
 
 #define BAAL_IMPLEMENTATION
-#include "Baal.h"
+#include "Baal_light.h"
 
 typedef struct Obj {
     int index;
@@ -56,7 +56,7 @@ Use **Baal_clear()** to fully clear the buffer.
 #include <stdio.h>
 
 #define BAAL_IMPLEMENTATION
-#include "Baal.h"
+#include "Baal_light.h"
 
 typedef struct Obj {
     int index;
@@ -83,7 +83,7 @@ int main(void) {
 You can use **Baal_print()** function to print status of memory blocks:
 ```c
 #define BAAL_IMPLEMENTATION
-#include "Baal.h"
+#include "Baal_light.h"
 
 Baal_createStatic(numbers, sizeof(int), 10);
 

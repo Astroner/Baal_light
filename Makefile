@@ -1,8 +1,8 @@
-CC=gcc-12
+CC=gcc
 SOURCES:=$(wildcard src/*.c src/*/*.c)
 OBJECTS=$(SOURCES:.c=.o)
 HEADERS=headers
-LIBNAME=Baal.h
+LIBNAME=Baal_light.h
 
 EXECUTABLE=./start
 
