@@ -71,7 +71,7 @@ __Zeb* Zeb_init(Zeb* zeb, char* buffer, size_t bufferLength, size_t blockSize)__
 Use this function if you want to initialize **Zeb** instance on a custom memory region.
 If insufficient buffer is provided **Zeb_init()** returns **NULL**.
 To get total size of required memory for specific block size and blocks number use macro **Zeb_getTotalMemorySize(blockSize, blocksNumber)**
-> Note that block size cannot be less than **ZEB_BLOCK_MIN_SIZE** and even if you provide smaller size it will be rounded to min size with **Zeb_roundBlockSize(blockSize)** function.
+> Note that block size cannot be less than **ZEB_BLOCK_MIN_SIZE** and even if you provide smaller size it will be rounded to min size with **Zeb_roundBlockSize(blockSize)** macro.
 
 ```c
 #define ZEB_IMPLEMENTATION
