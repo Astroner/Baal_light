@@ -37,14 +37,14 @@ int main(void) {
 **Zeb_defineStatic(NAME, BLOCK_SIZE, BLOCKS_NUMBER)** does the same thing with **Zeb_define(NAME, BLOCK_SIZE, BLOCKS_NUMBER)** but adds modifier **static** to variable definitions.
 
 ## Functions
-**Zeb* Zeb_create(size_t blockSize, size_t blocksNumber)**
+__Zeb* Zeb_create(size_t blockSize, size_t blocksNumber)__
  - **returns** - **Zeb** instance
  - **blockSize** - size of a single block
  - **blocksNumber** - maximum number of blocks to be allocated
 
 By default this function uses **malloc** to allocate required memory from heap, but it can be changed by defining **ZEB_STD_MALLOC** macro with desired function before including the implementation.
 
-**void Zeb_destroy(Zeb*)** function destroys provided **Zeb** instance and frees allocated memory. Basically this function is just an alias for std **free()**, which can be replaced by defining **ZEB_STD_FREE** with desired function.
+__void Zeb_destroy(Zeb*)__ function destroys provided **Zeb** instance and frees allocated memory. Basically this function is just an alias for std **free()**, which can be replaced by defining **ZEB_STD_FREE** with desired function.
 
 ```c
 #define ZEB_IMPLEMENTATION
