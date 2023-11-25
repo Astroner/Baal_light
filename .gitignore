@@ -3,3 +3,6 @@
 *.o
 start
 test
+
+*.gen.txt
+*.gen

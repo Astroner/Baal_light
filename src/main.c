@@ -1,14 +1,21 @@
-#define BAAL_IMPLEMENTATION
-#include "Baal.h"
+#include "Zeb.h"
 
-Baal_createStatic(numbers, sizeof(int), 10);
+#include <stdio.h>
+
+Zeb_define(a, 2, 2);
 
 int main(void) {
-    Baal_alloc(numbers);
+    Zeb* test = Zeb_create(2, 5);
 
-    Baal_print(numbers);
+    char* a = Zeb_alloc(test);
+    char* b = Zeb_alloc(test);
 
-    Baal_clear(numbers);
+    Zeb_free(test, a);
+    Zeb_free(test, b);
 
+    Zeb_alloc(test);
+
+    Zeb_print(test);
+    
     return 0;
 }

@@ -1,8 +1,8 @@
-CC=gcc
+CC=gcc-13
 SOURCES:=$(wildcard src/*.c src/*/*.c)
 OBJECTS=$(SOURCES:.c=.o)
 HEADERS=headers
-LIBNAME=Baal_light.h
+LIBNAME=Zeb.h
 
 EXECUTABLE=./start
 
@@ -15,16 +15,17 @@ build: $(OBJECTS)
 .c.o:
 	gcc $(CFLAGS) -c -I$(HEADERS) -Wall -Wextra -o $@ $<
 
-lib: headers/Baal.h src/Baal.c
-	cat headers/Baal.h > $(LIBNAME)
-	echo "#if defined(BAAL_IMPLEMENTATION)" >> $(LIBNAME)
-	tail -n +2 src/Baal.c >> $(LIBNAME)
-	echo "\n#endif" >> $(LIBNAME)
+lib: headers/Zeb.h src/Zeb.c
+	cat headers/Zeb.h > $(LIBNAME)
+	echo "#if defined(ZEB_IMPLEMENTATION)" >> $(LIBNAME)
+	tail -n +2 src/Zeb.c >> $(LIBNAME)
+	echo "\n#endif // ZEB_IMPLEMENTATION\n" >> $(LIBNAME)
 
+.PHONY: test
 test: lib
-	$(CC) -o test test.c
-	./test
-	rm -f test
+	$(CC) -o test.gen -DCOMPILER="\"$(CC)\"" test.c
+	./test.gen
+	rm -f test.gen
 
 clean:
 	rm -f $(EXECUTABLE) $(OBJECTS) $(LIBNAME)

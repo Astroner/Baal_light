@@ -1,111 +1,85 @@
-#define BAAL_IMPLEMENTATION
-#include "./Baal_light.h"
-
-#include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <dirent.h>
+#include <unistd.h>
 
-void createsStaticAllocator() {
-    Baal_createStatic(baal, sizeof(int), 10);
-    
-    assert(baal->blockSize == sizeof(int));
-    assert(baal->blocksNumber == 10);
-    assert(baal->cursor == baal->buffer);
-    assert(baal->freeStack.size == 0);
-}
+#if !defined(COMPILER)
+    #define COMPILER "gcc"
+#endif
 
-void createsAndDestroysDynamicAllocator() {
-    Baal* baal = Baal_create(sizeof(int), 10);
+int main(int argc, char** argv) {
+    printf("\nTesting examples:\n");
 
-    assert(baal->blockSize == sizeof(int));
-    assert(baal->blocksNumber == 10);
-    assert(baal->cursor == baal->buffer);
-    assert(baal->freeStack.size == 0);
+    printf("Compiler: "COMPILER"\n\n");
 
-    Baal_destroy(baal);
-}
+    chdir("tests");
 
-void movesCursorCorrectly() {
-    Baal_createStatic(baal, sizeof(int), 10);
+    DIR* dir = opendir(".");
 
-    int* num1 = Baal_alloc(baal);
-    int* num2 = Baal_alloc(baal);
-    int* num3 = Baal_alloc(baal);
+    struct dirent* de;
 
-    assert(baal->cursor == (char*)num3 + sizeof(int));
-    
-    Baal_free(baal, num3);
-    Baal_free(baal, num2);
-    Baal_free(baal, num1);
+    while((de = readdir(dir))) {
+        if(de->d_type != DT_DIR || de->d_namlen < 3 || de->d_name[0] == '.') continue;
 
-    assert(baal->cursor == baal->buffer);
-}
+        printf("it ");
+        char* name = de->d_name;
+        char ch;
+        while((ch = *name++)) {
+            if(ch >= 'A' && ch <= 'Z') {
+                putchar(' ');
+                putchar(ch + ('a' - 'A'));
+            } else {
+                putchar(ch);
+            }
+        }
+        printf(" ... ");
 
-void freeStackWorksCorrectly() {
-    Baal_createStatic(baal, sizeof(int), 10);
+        chdir(de->d_name);
 
-    int* num1 = Baal_alloc(baal);
-    int* num2 = Baal_alloc(baal);
-    int* num3 = Baal_alloc(baal);
+        system(COMPILER" -o ./run.gen -Wall -Wextra -std=c99 -pedantic main.c");
 
-    Baal_free(baal, num1);
-    assert(baal->freeStack.size == 1);
-    assert(baal->freeStack.buffer[0] == num1);
+        if(system("./run.gen > actual.gen.txt") < 0) {
+            printf("Failed to execute test\n");
 
-    int* num4 = Baal_alloc(baal);
-    assert(num4 == num1);
-    assert(baal->freeStack.size == 0);
+            closedir(dir);
 
-    Baal_free(baal, num3);
-    Baal_free(baal, num2);
+            return 1;
+        }
 
-    assert(baal->freeStack.size == 0);
-    
-    Baal_free(baal, num4);
-    assert(baal->cursor == baal->buffer);
-    assert(baal->freeStack.size == 0);
-}
+        system("diff actual.gen.txt expected.txt > diff.gen.txt");
 
-void correctlyHandlesEndOfTheBlocks() {
-    Baal_createStatic(baal, sizeof(int), 4);
-    Baal_alloc(baal);
-    Baal_alloc(baal);
-    Baal_alloc(baal);
-    Baal_alloc(baal);
-    int* last = Baal_alloc(baal);
+        FILE* diff = fopen("diff.gen.txt", "r");
 
-    assert(last == NULL);
-}
+        fseek(diff, 0, SEEK_END);
 
-void clearsMemory() {
-    Baal_createStatic(baal, sizeof(int), 4);
+        fpos_t size;
 
-    int* first = Baal_alloc(baal);
-    Baal_alloc(baal);
-    Baal_alloc(baal);
-    Baal_alloc(baal);
+        fgetpos(diff, &size);
 
-    Baal_free(baal, first);
-    Baal_clear(baal);
+        fclose(diff);
 
-    assert(baal->cursor == baal->buffer);
-    assert(baal->freeStack.size == 0);
-}
+        if(size > 0) {
+            printf(
+                "Actual result doesn't match expected one.\n"
+                "See diff in 'tests/examples/%s/diff.gen.txt' and actual result in 'tests/examples/%s/actual.gen.txt'\n", 
+                de->d_name, de->d_name
+            );
 
-#define TEST(funcName)\
-    printf("%s - ", #funcName);\
-    funcName();\
-    printf("PASS\n");\
+            closedir(dir);
 
-int main(void) {
-    printf("\nLaunching test cases:\n");
+            return 1;
+        }
+        
+        system("rm -f run.gen actual.gen.txt diff.gen.txt");
 
-    TEST(createsStaticAllocator);
-    TEST(createsAndDestroysDynamicAllocator);
-    TEST(movesCursorCorrectly);
-    TEST(freeStackWorksCorrectly);
-    TEST(correctlyHandlesEndOfTheBlocks);
-    TEST(clearsMemory);
+        chdir("..");
 
-    printf("\n");
+        printf("DONE\n");
+    }
+
+    closedir(dir);
+
+    printf("\nFINISHED\n");
+
     return 0;
 }

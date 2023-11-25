@@ -1,0 +1,4 @@
+[00] BUSY
+[01] BUSY
+[02] FREE
+[03] FREE
