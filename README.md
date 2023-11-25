@@ -38,7 +38,7 @@ int main(void) {
 
 ## Functions
 __Zeb* Zeb_create(size_t blockSize, size_t blocksNumber)__
- - **returns** - **Zeb** instance
+ - **returns** - **NULLABLE** - **Zeb** instance
  - **blockSize** - size of a single block
  - **blocksNumber** - maximum number of blocks to be allocated
 
