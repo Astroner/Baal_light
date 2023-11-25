@@ -4,6 +4,15 @@ This is STB-like library for fixed-size block memory allocation.
 # Include
 As with any header only library, you need to include *Zeb.h* library to your project and define **ZEB_IMPLEMENTATION** before **include** statement to include the implementation.
 
+# Table of content
+ - [Create instance](#create-instance)
+     - [Macros](#macros)
+     - [Functions](#functions)
+     - [Init instance](#init-instance)
+ - [Allocate](#allocate)
+ - [Clear](#clear)
+ - [Print](#print)
+
 # Create instance
 ## Macros
 **Zeb_define(NAME, BLOCK_SIZE, BLOCKS_NUMBER)**
@@ -52,7 +61,7 @@ int main(void) {
 }
 ```
 
-# Init instance
+## Init instance
 __Zeb* Zeb_init(Zeb* zeb, char* buffer, size_t bufferLength, size_t blockSize)__
  - **returns** - **NULLABLE** - pointer to provided zeb empty structure
  - **buffer** - allocator memory region
@@ -144,7 +153,7 @@ int main(void) {
 }
 ```
 
-## Print
+# Print
 You can use **Zeb_print()** function to print status of memory blocks:
 ```c
 #define ZEB_IMPLEMENTATION
