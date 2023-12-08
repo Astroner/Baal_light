@@ -2,7 +2,7 @@
 This is STB-like library for fixed-size block memory allocation.
 
 # Include
-As with any header only library, you need to include *Zeb.h* library to your project and define **ZEB_IMPLEMENTATION** before **include** statement to include the implementation.
+As with any header only library, you need to include [Zeb.h](https://raw.githubusercontent.com/Astroner/Zeb/master/Zeb.h) library to your project and define **ZEB_IMPLEMENTATION** before **include** statement to include the implementation.
 
 # Table of content
  - [Create instance](#create-instance)
@@ -156,6 +156,7 @@ int main(void) {
 # Print
 You can use **Zeb_print()** function to print status of memory blocks:
 ```c
+#define ZEB_DEBUG
 #define ZEB_IMPLEMENTATION
 #include "Zeb.h"
 
@@ -179,3 +180,4 @@ int main(void) {
     return 0;
 }
 ```
+To use this function you need to define **ZEB_DEBUG** before including the implementation. By default this function uses **printf** to log data into stdout, but it can be overridden by defining **ZEB_STD_PRINT** with desired function before including the implementation

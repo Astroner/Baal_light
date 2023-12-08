@@ -1,7 +1,7 @@
 #if !defined(ZEB_H)
 #define ZEB_H
 
-#include <stdlib.h>
+#include <stddef.h>
 
 #define ZEB_BLOCK_MIN_SIZE sizeof(void*)
 

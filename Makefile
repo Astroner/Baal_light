@@ -22,10 +22,10 @@ lib: headers/Zeb.h src/Zeb.c
 	echo "\n#endif // ZEB_IMPLEMENTATION\n" >> $(LIBNAME)
 
 .PHONY: test
-test: lib
-	$(CC) -o test.gen -DCOMPILER="\"$(CC)\"" test.c
-	./test.gen
-	rm -f test.gen
+tests: lib
+	$(CC) -o tests.gen -std=c99 -pedantic -Wall -Wextra tests.c
+	./tests.gen
+	rm -f tests.gen
 
 clean:
 	rm -f $(EXECUTABLE) $(OBJECTS) $(LIBNAME)

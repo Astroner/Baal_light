@@ -1,15 +1,19 @@
 #include "Zeb.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#if !defined(ZEB_STD_MALLOC)
+    #include <stdlib.h>
+    #define ZEB_STD_MALLOC malloc
+#endif // ZEB_STD_MALLOC
 
-#if !defined(ZEB_STB_MALLOC)
-    #define ZEB_STB_MALLOC malloc
-#endif // ZEB_STB_MALLOC
+#if !defined(ZEB_STD_FREE)
+    #include <stdlib.h>
+    #define ZEB_STD_FREE free
+#endif // ZEB_STD_FREE
 
-#if !defined(ZEB_STB_FREE)
-    #define ZEB_STB_FREE free
-#endif // ZEB_STB_FREE
+#if !defined(ZEB_STD_PRINT)
+    #include <stdio.h>
+    #define ZEB_STD_PRINT printf
+#endif // ZEB_STD_PRINT
 
 /*
     General algorithm:
@@ -107,7 +111,7 @@ void Zeb_clear(Zeb* zeb) {
 }
 
 Zeb* Zeb_create(size_t blockSize, size_t blocksNumber) {
-    char* mem = ZEB_STB_MALLOC(sizeof(Zeb) + Zeb_getTotalMemorySize(blockSize, blocksNumber));
+    char* mem = ZEB_STD_MALLOC(sizeof(Zeb) + Zeb_getTotalMemorySize(blockSize, blocksNumber));
 
     if(mem == NULL) return NULL;
 
@@ -125,7 +129,7 @@ Zeb* Zeb_create(size_t blockSize, size_t blocksNumber) {
 }
 
 void Zeb_destroy(Zeb* zeb) {
-    ZEB_STB_FREE(zeb);
+    ZEB_STD_FREE(zeb);
 }
 
 Zeb* Zeb_init(Zeb* zeb, char* buffer, size_t bufferLength, size_t blockSize) {
@@ -145,12 +149,13 @@ Zeb* Zeb_init(Zeb* zeb, char* buffer, size_t bufferLength, size_t blockSize) {
     return zeb;
 }
 
+#if defined(ZEB_DEBUG)
 void Zeb_print(Zeb* zeb) {
     int restIsBusy = zeb->cursor == NULL;
 
     for(size_t i = 0; i < zeb->blocksNumber; i++) {
         if(restIsBusy) {
-            printf("[%.2zu] BUSY\n", i);
+            ZEB_STD_PRINT("[%.2zu] BUSY\n", i);
         }
 
         char** current = (char**)(zeb->buffer + i * zeb->blockSize);
@@ -178,6 +183,7 @@ void Zeb_print(Zeb* zeb) {
             ptr = (char**)*ptr;
         }
 
-        printf("[%.2zu] %s\n", i, isInSequence ? "FREE" : "BUSY");
+        ZEB_STD_PRINT("[%.2zu] %s\n", i, isInSequence ? "FREE" : "BUSY");
     }
 }
+#endif // ZEB_DEBUG

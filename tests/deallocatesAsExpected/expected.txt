@@ -1,8 +1,0 @@
-[00] FREE
-[01] BUSY
-[02] BUSY
-[03] FREE
-[00] FREE
-[01] FREE
-[02] BUSY
-[03] FREE
