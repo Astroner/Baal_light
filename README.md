@@ -188,7 +188,7 @@ int main(void) {
     return 0;
 }
 ```
-Here we initialize **ZebIterator** with **ZebIterator_init** function and iterate the data with **ZebIterator_next**.
+Here we initialize **ZebIterator** with **ZebIterator_init** function and iterate over the data with **ZebIterator_next**.
 The iterator itself contains information about current item:
 ```c
 typedef struct ZebIterator {
@@ -226,7 +226,7 @@ int main(void) {
     return 0;
 }
 ```
-Basically **ZEB_ITERATE** will do exactly the same what we did in full example.
+Basically **ZEB_ITERATE** will do exactly the same what we did in the full example.
 
 ```c
 #define ZEB_ITERATE(
