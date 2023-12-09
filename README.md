@@ -176,7 +176,7 @@ int main(void) {
     ZebIterator_init(&iter, zeb);
 
     int sum = 0;
-    int* num
+    int* num;
     while((num = ZebIterator_next(&iter))) {
         if(iter.isFree) continue;
 
