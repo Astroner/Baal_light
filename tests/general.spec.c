@@ -1,18 +1,15 @@
+#include "tests-new.h"
+
 #define WITH_AFTER_EACH
 #include "tests.h"
 
-CREATE_PRINTF_LIKE_FUNCTION(testPrint, 500)
+#include "../Zeb.h"
 
-#define ZEB_DEBUG
-#define ZEB_STD_PRINT testPrint
-#define ZEB_IMPLEMENTATION
-#include "Zeb.h"
-
-AFTER_EACH(ZebTests) {
+AFTER_EACH(general) {
     testPrint__reset();
 }
 
-DESCRIBE(ZebTests) {
+DESCRIBE(general) {
     IT("works") {
         Zeb_define(test, 2, 10);
 

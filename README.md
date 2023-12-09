@@ -11,6 +11,7 @@ As with any header only library, you need to include [Zeb.h](https://raw.githubu
      - [Init instance](#init-instance)
  - [Allocate](#allocate)
  - [Clear](#clear)
+ - [Iterator](#iterator)
  - [Print](#print)
 
 # Create instance
@@ -151,6 +152,89 @@ int main(void) {
 
     return 0;
 }
+```
+
+# Iterator
+You can iterate over each block in the **Zeb** using **ZebIterator**. Quick example:
+
+```c
+#include <stdio.h>
+
+#define ZEB_IMPLEMENTATION
+#include "Zeb.h"
+
+int main(void) {
+    Zeb_define(zeb, sizeof(int), 10);
+
+    int* a = Zeb_alloc(zeb);
+    *a = 5;
+
+    int* b = Zeb_alloc(zeb);
+    *b = 7;
+
+    ZebIterator iter;
+    ZebIterator_init(&iter, zeb);
+
+    int sum = 0;
+    int* num
+    while((num = ZebIterator_next(&iter))) {
+        if(iter.isFree) continue;
+
+        sum += *num;
+    }
+
+    printf("sum: %d\n", sum); // sum: 12
+
+    return 0;
+}
+```
+Here we initialize **ZebIterator** with **ZebIterator_init** function and iterate the data with **ZebIterator_next**.
+The iterator itself contains information about current item:
+```c
+typedef struct ZebIterator {
+    size_t index;   // index of the block
+    int isFree;     // block status
+    void* current;  // pointer to current block
+} ZebIterator;
+```
+
+Macro **ZEB_ITERATE** simplifies the process:
+```c
+#include <stdio.h>
+
+#define ZEB_IMPLEMENTATION
+#include "Zeb.h"
+
+int main(void) {
+    Zeb_define(zeb, sizeof(int), 10);
+
+    int* a = Zeb_alloc(zeb);
+    *a = 5;
+
+    int* b = Zeb_alloc(zeb);
+    *b = 7;
+
+    int sum = 0;
+    ZEB_ITERATE(zeb, iter, int*, num) {
+        if(iter.isFree) continue;
+
+        sum += *num;
+    }
+
+    printf("sum: %d\n", sum); // sum: 12
+
+    return 0;
+}
+```
+Basically **ZEB_ITERATE** will do exactly the same what we did in full example.
+
+```c
+#define ZEB_ITERATE(
+    ZEB,        // Zeb instance
+    INFO_NAME,  // Name of the ZebIterator variable
+    TYPE,       // Type of the pointer
+    VARIABLE    // Current item variable
+)
 ```
 
 # Print

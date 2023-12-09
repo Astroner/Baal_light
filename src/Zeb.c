@@ -1,4 +1,6 @@
 #include "Zeb.h"
+#include "todo.h"
+
 
 #if !defined(ZEB_STD_MALLOC)
     #include <stdlib.h>
@@ -40,7 +42,7 @@
     Then we need to calculate the next value of the cursor.
      - If cursored block contains NULL, then we need to check amount of free space after it, and we have some then we just set cursor to the next free block
        and fill it with NULL else we set cursor to NULL(we have no space left)
-     - If cursored block contains pointer to itself, the it is the last free block, therefore we set cursor to NULL
+     - If cursored block contains pointer to itself, then it is the last free block, therefore we set cursor to NULL
      - In all other cases cursored pointer contains pointer to the next free block which is the next cursor
     
     After first Zeb_alloc() call the structure will look like this:
@@ -149,41 +151,60 @@ Zeb* Zeb_init(Zeb* zeb, char* buffer, size_t bufferLength, size_t blockSize) {
     return zeb;
 }
 
+void ZebIterator_init(ZebIterator* iterator, const Zeb* zeb) {
+    iterator->__internal.zeb = zeb;
+    iterator->__internal.end = zeb->buffer + zeb->blockSize * zeb->blocksNumber;
+    iterator->current = NULL;
+}
+
+static int Zeb__internal__isInSequence(const Zeb* zeb, const void* searching) {
+    char** ptr = zeb->cursor;
+    while(1) {
+        if(ptr == searching) {
+            return 1;
+        }
+
+        if(*ptr == NULL) {
+            if(searching > (void*)ptr) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
+        if(*ptr == (char*)ptr) {
+            return 0;
+        }
+
+        ptr = (char**)*ptr;
+    }
+}
+
+void* ZebIterator_next(ZebIterator* iterator) {
+    if((char*)iterator->current + iterator->__internal.zeb->blockSize == iterator->__internal.end) {
+        return NULL;
+    }
+
+    if(iterator->current == NULL) {
+        iterator->current = iterator->__internal.zeb->buffer;
+        iterator->index = 0;
+    } else {
+        iterator->index += 1;
+        iterator->current = (char*)iterator->current + iterator->__internal.zeb->blockSize;
+    }
+
+    iterator->isFree = Zeb__internal__isInSequence(iterator->__internal.zeb, iterator->current);
+    return iterator->current;
+}
+
+void ZebIterator_reset(ZebIterator* iterator) {
+    iterator->current = NULL;
+}
+
 #if defined(ZEB_DEBUG)
-void Zeb_print(Zeb* zeb) {
-    int restIsBusy = zeb->cursor == NULL;
-
-    for(size_t i = 0; i < zeb->blocksNumber; i++) {
-        if(restIsBusy) {
-            ZEB_STD_PRINT("[%.2zu] BUSY\n", i);
-        }
-
-        char** current = (char**)(zeb->buffer + i * zeb->blockSize);
-
-        // check free blocks sequence
-        int isInSequence = 0;
-        char** ptr = zeb->cursor;
-        while(1) {
-            if(ptr == current) {
-                isInSequence = 1;
-                break;
-            }
-
-            if(*ptr == NULL) {
-                if(current > ptr) {
-                    isInSequence = 1;
-                }
-                break;
-            }
-
-            if(*ptr == (char*)ptr) {
-                break;
-            }
-
-            ptr = (char**)*ptr;
-        }
-
-        ZEB_STD_PRINT("[%.2zu] %s\n", i, isInSequence ? "FREE" : "BUSY");
+void Zeb_print(const Zeb* zeb) {
+    ZEB_ITERATE(zeb, info, void*, el) {
+        ZEB_STD_PRINT("[%.2zu] %s\n", info.index, info.isFree ? "FREE" : "BUSY");
     }
 }
 #endif // ZEB_DEBUG

@@ -62,6 +62,28 @@ void Zeb_destroy(Zeb* zeb);
 void* Zeb_alloc(Zeb* zeb);
 void Zeb_free(Zeb* zeb, void* block);
 void Zeb_clear(Zeb* zeb);
-void Zeb_print(Zeb* zeb);
+
+void Zeb_print(const Zeb* zeb);
+
+#define ZEB_ITERATE(ZEB, INFO_NAME, TYPE, VARIABLE)\
+    ZebIterator INFO_NAME;\
+    ZebIterator_init(&INFO_NAME, ZEB);\
+    TYPE VARIABLE;\
+    while((VARIABLE = ZebIterator_next(&INFO_NAME)))
+
+typedef struct ZebIterator {
+    struct {
+        const Zeb* zeb;
+        const char* end;
+    } __internal;
+
+    size_t index;
+    int isFree;
+    void* current;
+} ZebIterator;
+
+void ZebIterator_init(ZebIterator* iterator, const Zeb* zeb);
+void* ZebIterator_next(ZebIterator* iterator);
+void ZebIterator_reset(ZebIterator* iterator);
 
 #endif // ZEB_H
